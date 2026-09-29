@@ -123,4 +123,3 @@ SELECT
 	SUM(Sales) OVER(PARTITION BY OrderStatus ORDER BY OrderDate ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS [Unbounded Preceding and Unbounded Following]
 FROM Sales.Orders
 
-	
