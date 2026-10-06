@@ -1,5 +1,11 @@
 USE SalesDB;
 
+/*Rank Functions:
+  1>Numbers : ROW_NUMBER(), RANK(), DENSE_RANK(), NTILE(n)
+  2>Percentage : CUME_DIST(), PERCENT_RANK()
+*/
+
+
 --Rank the orders based on sales from highest to lowest
 SELECT *,
        ROW_NUMBER() OVER (ORDER BY Sales DESC) AS [SalesRank_Row_NUMBER],
