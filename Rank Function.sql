@@ -74,7 +74,39 @@ SELECT
 FROM Sales.Orders
 
 
---Find the products that fall within 40% of prices
+--Cume_Dist() : Calculates distribution of Data points within a window
+SELECT
+    *,
+    CUME_DIST() OVER(ORDER BY Sales DESC) AS [Cume_Dist = Position No / No of rows]
+FROM Sales.Orders
 
 
+--Percent_Rank() : Calculates relative position of each row
+SELECT
+    *,
+    PERCENT_RANK() OVER(ORDER BY Sales DESC) AS [Percent_Rank = Position No - 1 / No of rows - 1]
+FROM Sales.Orders
 
+
+--Find the products that falls within 40% of prices
+SELECT *,
+    CONCAT(Cume_Dist*100, '%') AS [%]
+FROM (
+SELECT 
+    CUME_DIST() OVER(ORDER BY Price DESC) AS [Cume_Dist],
+    ProductID,
+    Product,
+    Price
+FROM Sales.Products
+) t WHERE Cume_Dist < = 0.4
+--OR
+SELECT *,
+    CONCAT(Cume_Dist*100, '%') AS [%]
+FROM (
+SELECT 
+    PERCENT_RANK() OVER(ORDER BY Price DESC) AS [Cume_Dist],
+    ProductID,
+    Product,
+    Price
+FROM Sales.Products
+) t WHERE Cume_Dist < = 0.4
