@@ -20,5 +20,8 @@ ON c.CustomerID = o.CustomerID
 LEFT JOIN Sales.Products p
 ON p.ProductID = o.ProductID
 LEFT JOIN Sales.Employees e
-ON e.EmployeeID = o.CustomerID
-)
+ON e.EmployeeID = o.SalesPersonID
+);
+
+DROP VIEW Sales.V_Order_Details;
+
