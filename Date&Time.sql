@@ -46,13 +46,13 @@ SELECT
 	DATEPART(QUARTER, CreationTime) AS 'Quarter',
 	DATEPART(HOUR, CreationTime) AS 'Hour',
 	DATENAME(WEEKDAY, CreationTime) AS 'WeekDayName',
-	DATENAME(MONTH, CreationTime) AS 'WeekDayName',
+	DATENAME(MONTH, CreationTime) AS 'MonthName',
 	((DATEPART(WEEKDAY, CreationTime) + @@DATEFIRST - 2) % 7 + 1) AS 'WeekDayForCorrectMaths'
 FROM Sales.Orders
 
 
 --Use of Datetrunc
---Note: Truncates values until mentioned thing. Return value is also datetime2 forma
+--Note: Truncates values until mentioned thing. Return value is also datetime2 format
 SELECT 
 	OrderID,
 	CreationTime,

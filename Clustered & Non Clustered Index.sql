@@ -66,6 +66,65 @@ FROM Sales.DBCustomers
 WHERE Score < 500
 
 
+--ColumnStore Index
+
+-- ============================================================================
+-- 1. CLUSTERED COLUMNSTORE INDEX (CCI)
+-- ============================================================================
+-- Architecture:
+--   * NO sorted B-Tree rowstore table exists.
+--   * The ENTIRE table (all columns) is stored as unsorted, compressed columns.
+-- Storage Usage (sp_spaceused):
+--   * Data Space  : YES (It IS the main table itself; smallest total storage).
+--   * Index Space : NO  (0 KB extra index space, unless you add separate B-tree indexes).
+-- Best For:
+--   * Data warehouses, bulk inserts, and heavy analytical queries (SUM, AVG, GROUP BY).
+--   * Not ideal for frequent single-row updates or point lookups.
+
+
+--Note: No ColumnStore index uses any index storage, meaning, they dont create a B-Tree structure.
+--Executing it fails as one cannot use a column name in a clustered columnstore index
+CREATE CLUSTERED COLUMNSTORE INDEX idx_DBCustomers_CS ON Sales.DBCustomers (CustomerID)
+
+
+
+--Executing it fails as one cannot have more than one clustered index in a Table.So lets drop clustered index
+CREATE CLUSTERED COLUMNSTORE INDEX idx_DBCustomers_CS ON Sales.DBCustomers 
+
+--Dropping clustered index
+DROP INDEX idx_DBCustomers_CustomerID ON Sales.DBCustomers
+
+CREATE CLUSTERED COLUMNSTORE INDEX idx_DBCustomers_CS ON Sales.DBCustomers 
+
+--This fails as I cannot create more than one Columnstore index for a table(Inclusive of both clustered or non clustered index). So i can have only one columnstore index
+--This limitation of creating only one columnstore index is only with sql server. In other servers, we can create more than 2 columnstore index.
+--So lets drop this columnstore index to create one
+CREATE NONCLUSTERED COLUMNSTORE INDEX idx_DBCustomers_CS_FirstName ON Sales.DBCustomers (FirstName)
+
+--Drop clustered index to create one
+DROP INDEX idx_DBCustomers_CS ON Sales.DBCustomers 
+
+
+
+-- ============================================================================
+-- 2. NONCLUSTERED COLUMNSTORE INDEX (NCCI)
+-- ============================================================================
+-- Architecture:
+--   * TWO structures exist side-by-side:
+--     1. Main Table (Rowstore): Sorted B-Tree on FirstName -> keeps single-row writes/updates fast.
+--     2. Columnar Copy: Unsorted, compressed copy of ONLY selected columns -> makes analytics fast.
+-- Storage Usage (sp_spaceused):
+--   * Data Space  : YES (Used by the main sorted rowstore table).
+--   * Index Space : YES (Used by this secondary compressed columnar copy).
+-- Best For:
+--   * Active transactional (OLTP) tables that also need real-time reporting/analytics.
+
+CREATE NONCLUSTERED COLUMNSTORE INDEX idx_DBCustomers_CS_FirstName ON Sales.DBCustomers (FirstName)
+
+
+--Lets see if really the columnstore take less space than rowstroe and heap. For this lets use AdventureWorksDW2025 db as the data in SalesDB are smaller. Look into (Storage Comparison for Heap RowStore ColumnStore.sql) for understanding it better.
+
+
 
 
 
