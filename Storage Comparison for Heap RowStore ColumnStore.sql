@@ -1,4 +1,24 @@
 USE AdventureWorksDW2025
+/*
+   =======================================================================
+    HEAP vs. CLUSTERED vs. NONCLUSTERED (How Data Actually Lives on Disk)
+   =======================================================================
+   - HEAP (No Clustered Index):
+       The main table itself, stored UNSORTED on disk. Holds 100% of rows.
+
+   - CLUSTERED INDEX (Rowstore or Columnstore):
+       The main table itself, physically SORTED by the key column (or compressed
+       by column). Holds 100% of rows. Max 1 per table.
+
+   - NONCLUSTERED INDEX (Like the index at the back of a textbook):
+       Does NOT sort the main table. Instead, it creates a SEPARATE copy of
+       just the indexed key column(s) + a pointer back to the main table row:
+         * Nonclustered Rowstore    = Physically SORTED B-tree copy of key columns
+         * Nonclustered Columnstore = Compressed column segments (not sorted B-tree)
+       Can hold 100% of rows OR a filtered subset (WHERE). Many allowed per table.
+
+    */
+
 
 --Lets use FactInternetSales table. This is already clustered. So lets make a copy of it to make it non clustered.
 
