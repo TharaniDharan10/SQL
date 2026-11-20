@@ -126,5 +126,44 @@ CREATE NONCLUSTERED COLUMNSTORE INDEX idx_DBCustomers_CS_FirstName ON Sales.DBCu
 
 
 
+--UNIQUE INDEX
+
+SELECT * FROM Sales.Products
+
+--Executing it will not let it create unique index as this table has duplicate values in the mentioned column. 
+--I can still create this index if this table was empty. In that case, sql will not allow to enter duplicate values in Category column
+CREATE UNIQUE NONCLUSTERED INDEX idx_Products_Category ON Sales.Products (Category) 
+
+--This index will be created as Product is unique column
+CREATE UNIQUE NONCLUSTERED INDEX idx_Products_Product ON Sales.Products (Product) 
+
+--Trying to insert a duplicate value on which the unique index is build will not allow the insert to happen
+INSERT INTO Sales.Products (ProductID, Product) VALUES (106, 'Caps')
 
 
+
+
+--Filtered INDEX
+
+--This did a full scan on table
+SELECT *
+FROM Sales.Customers 
+WHERE Country = 'USA'
+
+--Creating a Filtered index to improve search
+CREATE NONCLUSTERED INDEX idx_Customers_Country ON Sales.Customers (Country) 
+WHERE Country = 'USA'
+
+
+--This now used index to search, thus increased performance
+SELECT *
+FROM Sales.Customers 
+WHERE Country = 'USA'
+
+
+--This did a full scan on table as no index was made on Country = 'Germany'
+SELECT *
+FROM Sales.Customers 
+WHERE Country = 'Germany'
+
+SELECT * FROM Sales.Orders
